@@ -18,7 +18,13 @@ app.get('*', cache({
 }))
 
 app.get('*', cors({
-  origin: '*',
+  origin: (origin) => {
+    if(origin === 'localhost' || origin.endsWith('.franciscosolis.workers.dev') || origin.endsWith('franciscosolis.cl')) {
+      return origin
+    }
+
+    return 'https://franciscosolis.cl'
+  },
   allowMethods: ['GET'],
   allowHeaders: ['Content-Type, Access-Control-Allow-Origin'],
   exposeHeaders: ['Content-Type, Access-Control-Allow-Origin'],
