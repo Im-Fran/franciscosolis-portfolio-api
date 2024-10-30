@@ -21,7 +21,7 @@ app.get('/', (c) => c.json({
   endpoints: [
     {
       path: '/github',
-      description: 'Get my github profile data'
+      description: 'Get my github profile data (avatar, repos, followers, location)'
     },
     {
       path: '/github/stats',
