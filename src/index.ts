@@ -19,7 +19,7 @@ app.get('*', cache({
 
 app.get('*', cors({
   origin: (origin, c) => {
-    if(origin === 'localhost' || origin.endsWith('.franciscosolis.workers.dev') || origin.endsWith('franciscosolis.cl')) {
+    if(origin.startsWith('http://localhost:') || origin.endsWith('.franciscosolis.workers.dev') || origin.endsWith('franciscosolis.cl')) {
       return origin
     }
 
