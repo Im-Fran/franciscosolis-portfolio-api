@@ -1,6 +1,7 @@
 import { Hono } from 'hono'
 import axios from "axios";
 import {cache} from "hono/cache";
+import { cors } from 'hono/cors'
 import getStars from "./fetchers/stars";
 import getCommits from "./fetchers/commits";
 import getPRs from "./fetchers/pull_requests";
@@ -16,6 +17,14 @@ app.get('*', cache({
   cacheControl: 'max-age=3600',
 }))
 
+app.get('*', cors({
+  origin: '*',
+  allowMethods: ['GET'],
+  allowHeaders: ['Content-Type, Access-Control-Allow-Origin'],
+  exposeHeaders: ['Content-Type, Access-Control-Allow-Origin'],
+  maxAge: 600,
+  credentials: true,
+}))
 app.get('/', (c) => c.json({
   message: 'Hello, World!',
   endpoints: [
