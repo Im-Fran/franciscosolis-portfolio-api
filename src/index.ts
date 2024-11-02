@@ -15,7 +15,6 @@ const app = new Hono<{ Bindings: Bindings }>()
 // Apply CORS middleware globally
 app.use('*', cors({
   origin: (origin, ctx) => {
-    console.log(origin)
     if (origin?.endsWith('localhost:5173') || origin?.endsWith('franciscosolis-portfolio.pages.dev') || origin?.endsWith('franciscosolis.cl') || origin?.endsWith('.franciscosolis.cl')) {
       return origin
     }
