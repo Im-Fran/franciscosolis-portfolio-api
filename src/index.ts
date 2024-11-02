@@ -1,7 +1,7 @@
 import { Hono } from 'hono'
 import axios from "axios";
-import {cache} from "hono/cache";
-import { cors } from 'hono/cors'
+import { cache } from "hono/cache";
+import { cors } from 'hono/cors';
 import getStars from "./fetchers/stars";
 import getCommits from "./fetchers/commits";
 import getPRs from "./fetchers/pull_requests";
@@ -12,25 +12,27 @@ type Bindings = {
 
 const app = new Hono<{ Bindings: Bindings }>()
 
+// Apply CORS middleware globally
+app.use('*', cors({
+  origin: (origin, ctx) => {
+    console.log(origin)
+    if (origin?.endsWith('localhost:5173') || origin?.endsWith('franciscosolis-portfolio.pages.dev') || origin?.endsWith('franciscosolis.cl') || origin?.endsWith('.franciscosolis.cl')) {
+      return origin
+    }
+    return 'https://franciscosolis.cl'  // Default allowed origin
+  },
+  allowMethods: ['GET'],
+  allowHeaders: ['Content-Type', 'Authorization'],  // Only include necessary headers
+  exposeHeaders: ['Content-Type'],
+  maxAge: 600,
+  credentials: false,  // Set to true only if needed
+}))
+
 app.get('*', cache({
   cacheName: 'franciscosolis-portfolio-api',
   cacheControl: 'max-age=3600',
 }))
 
-app.get('*', cors({
-  origin: (origin, c) => {
-    if(origin.startsWith('http://localhost:') || origin.endsWith('franciscosolis-portfolio.pages.dev') || origin.endsWith('franciscosolis.cl')) {
-      return origin
-    }
-
-    return 'https://franciscosolis.cl'
-  },
-  allowMethods: ['GET'],
-  allowHeaders: ['Content-Type, Access-Control-Allow-Origin'],
-  exposeHeaders: ['Content-Type, Access-Control-Allow-Origin'],
-  maxAge: 600,
-  credentials: true,
-}))
 app.get('/', (c) => c.json({
   message: 'Hello, World!',
   endpoints: [
@@ -56,7 +58,7 @@ app.get('/github', async (c) => {
     }
   });
 
-  if(response.status !== 200) {
+  if (response.status !== 200) {
     return c.json({
       error: 'Error fetching data from github'
     })
@@ -90,6 +92,5 @@ app.get('/github/stats', async (c) => {
     prs,
   })
 })
-
 
 export default app
